@@ -1,21 +1,29 @@
-name: Run Python Mail Script
+name: Send GMX Mail
+
 on:
   workflow_dispatch:
+    inputs:
+      email:
+        description: "Empfänger E-Mail"
+        required: true
+        type: string
 
 jobs:
   send_mail:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Create recipient.json
+        run: |
+          echo "{\"email\": \"${{ github.event.inputs.email }}\"}" > recipient.json
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install smtplib email-validator
+          python-version: "3.11"
 
       - name: Run mail script
         run: python mail.py
